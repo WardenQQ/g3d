@@ -1,3 +1,5 @@
+#include <GL/glx.h>
+
 #include "polygon.h"
 
 
@@ -90,4 +92,19 @@ void P_rotate(Polygon *p, Vector normal)
     for (i = 0; i < p->nb_vertices; i++) {
         p->vertices[i] = V_rotate(p->vertices[i], c, n, normal);
     }
+}
+
+
+void P_draw(Polygon *p)
+{
+    int i;
+
+    glColor3d(1, 1, 1);
+    glBegin(GL_LINE_LOOP);
+    for (i = 0; i < p->nb_vertices; i++) {
+        glVertex3f(p->vertices[i].x,
+                   p->vertices[i].y,
+                   p->vertices[i].z);
+    }
+    glEnd();
 }
