@@ -18,7 +18,7 @@ print-%: ; @echo $*=$($*)
 $(D_OBJ)/%.o: %.c
 	$(CC) -o $@ -c $< $(CFLAGS)
 
-$(D_BIN)/test_%: test_%.o %.o
+$(D_BIN)/test_%: test_%.o $(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 tests: $(TESTS)
