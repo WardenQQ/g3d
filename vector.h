@@ -23,7 +23,7 @@ typedef struct {
 Vector V_new(float x, float y, float z);
 
 int V_equality(Vector v1, Vector V2);
-void V_print(Vector v, char *message);
+void V_print(Vector v);
 
 Vector V_add(Vector v1, Vector v2);
 Vector V_substract(Vector v1, Vector v2);

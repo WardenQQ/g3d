@@ -18,8 +18,14 @@ Vector V_new(float x, float y, float z)
 int V_equality(Vector v1, Vector v2)
 {
     return (fabsf(v1.x - v2.x) <= EPSILON
-            && fabsf(v1.x - v2.x) <= EPSILON
-            && fabsf(v1.x - v2.x) <= EPSILON);
+            && fabsf(v1.y - v2.y) <= EPSILON
+            && fabsf(v1.z - v2.z) <= EPSILON);
+}
+
+
+void V_print(Vector v)
+{
+    fprintf(stdout, "{ x: %.5f, y: %.5f, z: %.5f }\n", v.x, v.y, v.z);
 }
 
 
@@ -63,9 +69,7 @@ float V_length(Vector v)
 
 Vector V_unit(Vector v)
 {
-    float length = V_length(v);
-
-    return V_new(v.x / length, v.y / length, v.z / length);
+    return V_multiply(1 / V_length(v), v);
 }
 
 
@@ -79,10 +83,7 @@ double V_decompose(Vector p, Vector u)
 
 Vector V_recompose(double x, double y, double z, Vector u, Vector v, Vector w)
 {
-    return V_new(x * u.x + x * v.x + x * w.x,
-            y * u.y + y * v.y + y * w.y,
-            z * u.z + z * v.z + z * w.z);
-
+    return V_add(V_multiply(x, u), V_add(V_multiply(y, v), V_multiply(z, w)));
 }
 
 /*
