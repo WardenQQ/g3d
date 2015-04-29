@@ -27,19 +27,12 @@ typedef struct {
 } Polygon;
 
 void P_init(Polygon *p);
-// initialise un polygone (0 sommets)
 
 void P_copy(Polygon *original, Polygon *copie);
-// original et copie sont deux polygones déjà alloués.
-// Cette fonction copie les donnée
-// depuis original vers copie de façon à ce que les
-// deux polygones soient identiques.
 
 void P_addVertex(Polygon *p, Vector pos);
-// ajoute un sommet au polygone P. Ce nouveau sommet est situé en pos.
 
 void P_removeLastVertex(Polygon *p);
-// enlève le dernier sommet de P
 
 Vector P_center(Polygon *p);
 
@@ -50,11 +43,8 @@ void P_translate(Polygon *p, Vector trans);
 void P_rotate(Polygon *p, Vector normal);
 
 void P_draw(Polygon *p);
-// dessine le polygone P
 
-void P_print(Polygon *p, char *message);
-// Affiche sur une console les données de P
-// à des fins de debuggage.
+void P_print(Polygon *p);
 
 
 #endif // __POLYGON_H__

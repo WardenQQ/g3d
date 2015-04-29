@@ -60,7 +60,7 @@ static char * test_removeLastVertex()
 static char * test_center()
 {
     Vector a = V_new(0, 0, 0),
-           b = V_new(2, 0, 1),
+           b = V_new(2, 0, 2),
            c = V_new(2, 2, 2),
            d = V_new(0, 2, 0),
            cen = V_new(1, 1, 1);
