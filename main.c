@@ -28,6 +28,18 @@ int is_drawing = 1;
 Polygon polygon;
 Mesh extrusion;
 
+void set_projection()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    if (is_drawing) {
+        glOrtho(0, 1, 0, 1, 0, 1);
+    } else {
+        gluPerspective(60, (float)width / height, 0.1, 100);
+    }
+}
+
 //------------------------------------------------------------
 
 void drawRepere()
@@ -55,20 +67,8 @@ void drawRepere()
 
 void display()
 {
-    glEnable(GL_DEPTH_TEST);
-    glDepthMask(GL_TRUE);
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    //glOrtho(-10,10,-10,10,-1000,1000);
-    if (is_drawing) {
-        glOrtho(0, 1, 0, 1, 0, 1);
-    } else {
-        gluPerspective(60, (float)width / height, 0.1, 100);
-    }
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -94,22 +94,35 @@ void display()
 
 //------------------------------------------------------------
 
+void reshape(int w, int h)
+{
+    width = w;
+    height = h;
+
+    glViewport(0, 0, w, h);
+
+    set_projection();
+}
+
+//------------------------------------------------------------
+
 void keyboard(unsigned char keycode, int x, int y)
 {
     printf("Touche frapee : %c (code ascii %d)\n",keycode, keycode);
     /* touche ECHAP */
     if (keycode==27) {
         exit(0);
-    } else if (keycode == 43 && camera_zoom_level < 100.0f) {
+    } else if (keycode == '+' && camera_zoom_level < 100.0f) {
         camera_zoom_level += 0.1f;
-    } else if (keycode == 45 && camera_zoom_level > 1.0f) {
+    } else if (keycode == '-' && camera_zoom_level > 2.0f) {
         camera_zoom_level -= 0.1f;
-    } else if (keycode == 48) {
+    } else if (keycode == '0') {
         camera_zoom_level = 2.0f;
         camera_x_rotate = 0.0f;
         camera_y_rotate = 0.0f;
-    } else if (keycode == 32) {
+    } else if (keycode == ' ') {
         is_drawing = 0;
+        set_projection();
         M_perlinExtrude(&extrusion, &polygon, 1);
     } else if (keycode >= '0' && keycode <= '9') {
         M_perlinExtrude(&extrusion, &polygon, keycode - '0');
@@ -185,6 +198,11 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(50, 50);
     glutCreateWindow("Projet extrusion");
     glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
