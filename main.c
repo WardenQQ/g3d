@@ -74,6 +74,8 @@ void display()
     glLoadIdentity();
 
     if (!is_drawing) {
+        Vector camera_pos = P_center(&polygon);
+        glTranslatef(-camera_pos.x, -camera_pos.y, -camera_pos.z);
         glTranslatef(0, 0, -camera_zoom_level);
     }
     glRotatef(camera_x_rotate, 1, 0, 0);

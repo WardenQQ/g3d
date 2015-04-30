@@ -44,14 +44,22 @@ void M_addSlice(Mesh *m, Polygon *p1, Polygon *p2)
 
 void M_perlinExtrude(Mesh *m, Polygon *p, int nb_slices)
 {
+    static int first_time = 1;
     int i;
-    Polygon cur,
-            new;
+    Polygon cur;
     Vector v_noise;
+
+    if (first_time) {
+        first_time = 0;
+        v_noise = PRLN_vectorNoise(P_center(p));
+        P_translate(p, v_noise);
+        P_rotate(p, V_unit(v_noise));
+    }
+
 
     P_copy(p, &cur);
 
-    for (i = 0; i < nb_slices; i++) {
+    for (i = 0; i < nb_slices && m->nb_quads + p->nb_vertices < M_MAX_QUADS; i++) {
         P_copy(p, &cur);
 
         v_noise = PRLN_vectorNoise(P_center(&cur));
