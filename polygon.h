@@ -21,12 +21,11 @@
 typedef struct {
 	int nb_vertices;
 	Vector vertices[P_MAX_VERTICES];
-	int is_closed;
-	int is_filled;
-	int is_convex;
 } Polygon;
 
 void P_init(Polygon *p);
+
+int P_valid(Polygon *p);
 
 void P_copy(Polygon *original, Polygon *copie);
 

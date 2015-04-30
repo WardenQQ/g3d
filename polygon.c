@@ -20,6 +20,25 @@ void P_copy(Polygon *original, Polygon *copie)
     }
 }
 
+int P_valid(Polygon *p)
+{
+    int i;
+    Vector u, v, w;
+
+    if (p->nb_vertices > 2) {
+        for (i = 0; i < p->nb_vertices; i++) {
+            u = V_substract(p->vertices[i], p->vertices[(i + 1) % p->nb_vertices]);
+            v = V_substract(p->vertices[i], p->vertices[(i + 2) % p->nb_vertices]);
+            w = V_cross(u, v);
+
+            if (!V_equality(w, V_new(0, 0, 0))) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
 
 void P_addVertex(Polygon *p, Vector pos)
 {
@@ -72,11 +91,20 @@ Vector P_center(Polygon *p)
 
 Vector P_normal(Polygon *p)
 {
-    // On considère qu'un polygone n'a pas 2 points colinéaires.
-    Vector u = V_substract(p->vertices[0], p->vertices[1]);
-    Vector v = V_substract(p->vertices[0], p->vertices[2]);
+    int i;
+    Vector n, u, v;
 
-    return V_unit(V_cross(u, v));
+    for (i = 0; i < p->nb_vertices; i++) {
+        u = V_substract(p->vertices[i], p->vertices[(i + 1) % p->nb_vertices]);
+        v = V_substract(p->vertices[i], p->vertices[(i + 2) % p->nb_vertices]);
+        n = V_cross(u, v);
+
+        if (!V_equality(n, V_new(0, 0, 0))) {
+            break;
+        }
+    }
+
+    return V_unit(n);
 }
 
 
@@ -107,13 +135,25 @@ void P_draw(Polygon *p)
     int i;
 
     glColor3d(0, 0, 0);
-    glBegin(GL_LINE_LOOP);
+    glBegin(GL_LINE_STRIP);
     for (i = 0; i < p->nb_vertices; i++) {
         glVertex3f(p->vertices[i].x,
                    p->vertices[i].y,
                    p->vertices[i].z);
     }
     glEnd();
+
+    if (p->nb_vertices > 2) {
+        glColor3d(0, 0, 1);
+        glBegin(GL_LINES);
+        glVertex3f(p->vertices[i - 1].x,
+                p->vertices[i - 1].y,
+                p->vertices[i - 1].z);
+        glVertex3f(p->vertices[0].x,
+                p->vertices[0].y,
+                p->vertices[0].z);
+        glEnd();
+    }
 }
 
 void P_print(Polygon *p)

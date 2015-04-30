@@ -22,6 +22,7 @@ int height = 600;
 float camera_zoom_level = 2.0f;
 float camera_x_rotate = 0.0f;
 float camera_y_rotate = 0.0f;
+Vector camera_pos;
 
 int is_drawing = 1;
 
@@ -74,17 +75,14 @@ void display()
     glLoadIdentity();
 
     if (!is_drawing) {
-        Vector camera_pos = P_center(&polygon);
-        glTranslatef(-camera_pos.x, -camera_pos.y, -camera_pos.z);
         glTranslatef(0, 0, -camera_zoom_level);
-    }
-    glRotatef(camera_x_rotate, 1, 0, 0);
-    glRotatef(camera_y_rotate, 0, 1, 0);
+        glRotatef(camera_x_rotate, 1, 0, 0);
+        glRotatef(camera_y_rotate, 0, 1, 0);
+        glTranslatef(-camera_pos.x, -camera_pos.y, -camera_pos.z);
 
-    if (is_drawing) {
-        P_draw(&polygon);
-    } else {
         M_draw(&extrusion);
+    } else {
+        P_draw(&polygon);
     }
 
     drawRepere();
@@ -120,12 +118,14 @@ void keyboard(unsigned char keycode, int x, int y)
         camera_zoom_level = 2.0f;
         camera_x_rotate = 0.0f;
         camera_y_rotate = 0.0f;
-    } else if (keycode == ' ') {
+    } else if (keycode == ' ' && P_valid(&polygon)) {
         is_drawing = 0;
         set_projection();
         M_perlinExtrude(&extrusion, &polygon, 1);
+        camera_pos = P_center(&polygon);
     } else if (keycode >= '0' && keycode <= '9') {
         M_perlinExtrude(&extrusion, &polygon, keycode - '0');
+        camera_pos = P_center(&polygon);
     }
 
     glutPostRedisplay();
