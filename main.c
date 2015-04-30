@@ -65,7 +65,7 @@ void display()
 
     //glOrtho(-10,10,-10,10,-1000,1000);
     if (is_drawing) {
-        glOrtho(-1,1,-1,1,-1,1);
+        glOrtho(0, 1, 0, 1, 0, 1);
     } else {
         gluPerspective(60, (float)width / height, 0.1, 100);
     }
@@ -108,7 +108,9 @@ void keyboard(unsigned char keycode, int x, int y)
         camera_y_rotate = 0.0f;
     } else if (keycode == 32) {
         is_drawing = 0;
-        M_perlinExtrude(&extrusion, &polygon, 1000);
+        M_perlinExtrude(&extrusion, &polygon, 1);
+    } else if (keycode >= '0' && keycode <= '9') {
+        M_perlinExtrude(&extrusion, &polygon, keycode - '0');
     }
 
     glutPostRedisplay();
@@ -121,19 +123,19 @@ void special(int keycode, int x, int y)
     if (!is_drawing) {
         switch(keycode) {
             case GLUT_KEY_UP:
-                camera_x_rotate += 10;
+                camera_x_rotate += 15;
                 break;
 
             case GLUT_KEY_DOWN :
-                camera_x_rotate -= 10;
+                camera_x_rotate -= 15;
                 break;
 
             case GLUT_KEY_LEFT:
-                camera_y_rotate -= 10;
+                camera_y_rotate -= 15;
                 break;
 
             case GLUT_KEY_RIGHT:
-                camera_y_rotate += 10;
+                camera_y_rotate += 15;
                 break;
 
             default:
@@ -149,8 +151,8 @@ void special(int keycode, int x, int y)
 void mouse(int button, int state, int x, int y)
 {
     if (is_drawing) {
-        float world_x = (float)x * 2 / glutGet(GLUT_WINDOW_WIDTH) - 1;
-        float world_y = ((float)y * 2 / glutGet(GLUT_WINDOW_HEIGHT) - 1) * -1;
+        float world_x = (float)x / glutGet(GLUT_WINDOW_WIDTH);
+        float world_y = (float)y / glutGet(GLUT_WINDOW_HEIGHT) * -1 + 1;
         switch(button) {
             case GLUT_LEFT_BUTTON :
                 if(state==GLUT_DOWN)

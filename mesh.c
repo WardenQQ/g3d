@@ -52,18 +52,18 @@ void M_perlinExtrude(Mesh *m, Polygon *p, int nb_slices)
     P_copy(p, &cur);
 
     for (i = 0; i < nb_slices; i++) {
-        P_copy(&cur, &new);
+        P_copy(p, &cur);
 
-        v_noise = PRLN_vectorNoise(P_center(&new));
-        if (V_dot(v_noise, P_normal(&new)) < 0) {
+        v_noise = PRLN_vectorNoise(P_center(&cur));
+        if (V_dot(v_noise, P_normal(&cur)) < 0) {
             v_noise = V_multiply(-1, v_noise);
         }
-        P_translate(&new, v_noise);
-        P_rotate(&new, V_unit(v_noise));
+        P_translate(&cur, v_noise);
+        P_rotate(&cur, V_unit(v_noise));
 
-        M_addSlice(m, &cur, &new);
+        M_addSlice(m, p, &cur);
 
-        P_copy(&new, &cur);
+        P_copy(&cur, p);
     }
 }
 
