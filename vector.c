@@ -74,6 +74,87 @@ Vector V_unit(Vector v)
 
 
 /*
+ * Retour: 1 -> M a gauche de [AB]
+ *        -1 -> M a droite de [AB]
+ *         0 -> M colineaire avec A et B
+ */
+int V_positionToSegment(Vector M, Vector A, Vector B)
+{
+    Vector AB = V_substract(B, A);
+    Vector AM = V_substract(M, A);
+    Vector normal = V_cross(AB, AM);
+
+    if (V_equality(normal, V_new(0, 0, 0))) {
+        return 0;
+    }
+
+    Vector up = V_new(0, 0, 1);
+    float dot = V_dot(normal, up);
+
+    if (dot >= -EPSILON && dot <= EPSILON) {
+        up = V_new(0, 1, 0);
+        dot = V_dot(normal, up);
+
+        if (dot >= -EPSILON && dot <= EPSILON) {
+            up = V_new(1, 0, 0);
+            dot = V_dot(normal, up);
+        }
+    }
+
+    if (dot >= 0) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+int V_onSegment(Vector M, Vector A, Vector B)
+{
+    Vector min = V_new(A.x < B.x ? A.x : B.x,
+                       A.y < B.y ? A.y : B.y,
+                       A.z < B.z ? A.z : B.z);
+    Vector max = V_new(A.x > B.x ? A.x : B.x,
+                       A.y > B.y ? A.y : B.y,
+                       A.z > B.z ? A.z : B.z);
+
+    return (M.x >= min.x && M.x <= max.x
+            && M.y >= min.y && M.y <= max.y
+            && M.z >= min.z && M.z <= max.z);
+}
+
+
+int V_segmentsIntersect(Vector A, Vector B, Vector C, Vector D)
+{
+    int posA = V_positionToSegment(A, C, D);
+    int posB = V_positionToSegment(B, C, D);
+    int posC = V_positionToSegment(C, A, B);
+    int posD = V_positionToSegment(D, A, B);
+
+    if (posA != posB && posC != posD) {
+        return 1;
+    }
+
+    if (posA == 0 && V_onSegment(A, C, D)) {
+        return 1;
+    }
+
+    if (posB == 0 && V_onSegment(B, C, D)) {
+        return 1;
+    }
+
+    if (posC == 0 && V_onSegment(C, A, B)) {
+        return 1;
+    }
+
+    if (posD == 0 && V_onSegment(D, A, B)) {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+/*
  * Précondition: u est un vecteur unitaire.
  */
 double V_decompose(Vector p, Vector u)

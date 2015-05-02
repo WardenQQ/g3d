@@ -43,29 +43,6 @@ void set_projection()
 
 //------------------------------------------------------------
 
-void drawRepere()
-{
-    glColor3d(1,0,0);
-    glBegin(GL_LINES);
-    glVertex3d(0,0,0);
-    glVertex3d(1,0,0);
-    glEnd();
-
-    glColor3d(0,1,0);
-    glBegin(GL_LINES);
-    glVertex3d(0,0,0);
-    glVertex3d(0,1,0);
-    glEnd();
-
-    glColor3d(0,0,1);
-    glBegin(GL_LINES);
-    glVertex3d(0,0,0);
-    glVertex3d(0,0,1);
-    glEnd();
-}
-
-//------------------------------------------------------------
-
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -84,8 +61,6 @@ void display()
     } else {
         P_draw(&polygon);
     }
-
-    drawRepere();
 
     glutSwapBuffers();
 }
@@ -106,7 +81,6 @@ void reshape(int w, int h)
 
 void keyboard(unsigned char keycode, int x, int y)
 {
-    printf("Touche frapee : %c (code ascii %d)\n",keycode, keycode);
     /* touche ECHAP */
     if (keycode==27) {
         exit(0);
@@ -118,11 +92,16 @@ void keyboard(unsigned char keycode, int x, int y)
         camera_zoom_level = 2.0f;
         camera_x_rotate = 0.0f;
         camera_y_rotate = 0.0f;
-    } else if (keycode == ' ' && P_valid(&polygon)) {
-        is_drawing = 0;
-        set_projection();
-        M_perlinExtrude(&extrusion, &polygon, 1);
-        camera_pos = P_center(&polygon);
+    } else if (keycode == ' ') {
+        if (is_drawing && P_valid(&polygon)) {
+            is_drawing = 0;
+            set_projection();
+        }
+
+        if (!is_drawing) {
+            M_perlinExtrude(&extrusion, &polygon, 1);
+            camera_pos = P_center(&polygon);
+        }
     } else if (keycode >= '0' && keycode <= '9') {
         M_perlinExtrude(&extrusion, &polygon, keycode - '0');
         camera_pos = P_center(&polygon);
@@ -202,7 +181,7 @@ int main(int argc, char *argv[])
 
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    glClearColor(238.0 / 255.0, 232.0 / 255.0, 213.0 / 255.0, 0.0f);
 
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);

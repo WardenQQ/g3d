@@ -68,6 +68,7 @@ void M_perlinExtrude(Mesh *m, Polygon *p, int nb_slices)
         }
         P_translate(&cur, v_noise);
         P_rotate(&cur, V_unit(v_noise));
+        V_print(v_noise);
 
         M_addSlice(m, p, &cur);
 
@@ -79,7 +80,7 @@ void M_draw(Mesh *m)
 {
     int i, j;
 
-    glColor3d(0, 0, 0);
+    glColor3f(131.0 / 255.0, 148.0 / 255.0, 150.0 / 255.0);
     for (i = 0; i < m->nb_quads; i++) {
         glBegin(GL_LINE_LOOP);
         for (j = 0; j < 4; j++) {

@@ -25,25 +25,45 @@ int P_valid(Polygon *p)
     int i;
     Vector u, v, w;
 
-    if (p->nb_vertices > 2) {
-        for (i = 0; i < p->nb_vertices; i++) {
-            u = V_substract(p->vertices[i], p->vertices[(i + 1) % p->nb_vertices]);
-            v = V_substract(p->vertices[i], p->vertices[(i + 2) % p->nb_vertices]);
-            w = V_cross(u, v);
 
-            if (!V_equality(w, V_new(0, 0, 0))) {
-                return 1;
-            }
+    if (p->nb_vertices < 3) {
+        return 0;
+    }
+
+    for (i = 1; i < p->nb_vertices - 2; i++) {
+        if (V_segmentsIntersect(p->vertices[i],
+                                p->vertices[i + 1],
+                                p->vertices[p->nb_vertices - 1],
+                                p->vertices[0])) {
+            return 0;
         }
     }
 
-    return 0;
+    if (V_equality(P_normal(p), V_new(0, 0, 0))) {
+        return 0;
+    }
+
+    return 1;
 }
 
 void P_addVertex(Polygon *p, Vector pos)
 {
+    int i;
+    Vector lastSeg;
+    Vector newSeg;
+
     if (p->nb_vertices >= P_MAX_VERTICES) {
         return;
+    }
+
+    // Les segments ne doivent pas se croiser.
+    for (i = 0; i < p->nb_vertices - 2; i++) {
+        if (V_segmentsIntersect(p->vertices[i],
+                                p->vertices[i + 1],
+                                p->vertices[p->nb_vertices - 1],
+                                pos)) {
+            return;
+        }
     }
 
     p->vertices[p->nb_vertices] = pos;
@@ -65,9 +85,6 @@ void P_removeLastVertex(Polygon *p)
 Vector P_center(Polygon *p)
 {
     int i;
-    float x = 0,
-          y = 0,
-          z = 0;
     Vector cen = V_new(0, 0, 0);
 
     for (i = 0; i < p->nb_vertices; i++) {
@@ -75,17 +92,6 @@ Vector P_center(Polygon *p)
     }
 
     return V_multiply(1.0f / p->nb_vertices, cen);
-
-    for (i = 0; i < p->nb_vertices; i++) {
-        x += p->vertices[i].x;
-        y += p->vertices[i].y;
-        z += p->vertices[i].z;
-    }
-    x /= p->nb_vertices;
-    y /= p->nb_vertices;
-    z /= p->nb_vertices;
-
-    return V_new(x, y, z);
 }
 
 
@@ -100,11 +106,11 @@ Vector P_normal(Polygon *p)
         n = V_cross(u, v);
 
         if (!V_equality(n, V_new(0, 0, 0))) {
-            break;
+            return V_unit(n);
         }
     }
 
-    return V_unit(n);
+    return V_new(0, 0, 0);
 }
 
 
@@ -134,7 +140,7 @@ void P_draw(Polygon *p)
 {
     int i;
 
-    glColor3d(0, 0, 0);
+    glColor3f(131.0 / 255.0, 148.0 / 255.0, 150.0 / 255.0);
     glBegin(GL_LINE_STRIP);
     for (i = 0; i < p->nb_vertices; i++) {
         glVertex3f(p->vertices[i].x,
@@ -144,7 +150,7 @@ void P_draw(Polygon *p)
     glEnd();
 
     if (p->nb_vertices > 2) {
-        glColor3d(0, 0, 1);
+        glColor3f(180.0 / 255.0, 137.0 / 255.0, 0.0);
         glBegin(GL_LINES);
         glVertex3f(p->vertices[i - 1].x,
                 p->vertices[i - 1].y,

@@ -33,6 +33,10 @@ float V_dot(Vector v1, Vector v2);
 float V_length(Vector v);
 Vector V_unit(Vector v);
 
+int V_positionToSegment(Vector M, Vector A, Vector B);
+int V_onSegment(Vector M, Vector A, Vector B);
+int V_segmentsIntersect(Vector A, Vector B, Vector C, Vector D);
+
 double V_decompose(Vector p, Vector u); 
 Vector V_recompose(double x, double y, double z, Vector u, Vector v, Vector w); 
 void V_uxUyFromUz(Vector u_z, Vector *u_x, Vector *u_y); 
