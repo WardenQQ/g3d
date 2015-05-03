@@ -23,8 +23,6 @@ void P_copy(Polygon *original, Polygon *copie)
 int P_valid(Polygon *p)
 {
     int i;
-    Vector u, v, w;
-
 
     if (p->nb_vertices < 3) {
         return 0;
@@ -49,8 +47,6 @@ int P_valid(Polygon *p)
 void P_addVertex(Polygon *p, Vector pos)
 {
     int i;
-    Vector lastSeg;
-    Vector newSeg;
 
     if (p->nb_vertices >= P_MAX_VERTICES) {
         return;

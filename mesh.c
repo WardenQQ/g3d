@@ -68,7 +68,6 @@ void M_perlinExtrude(Mesh *m, Polygon *p, int nb_slices)
         }
         P_translate(&cur, v_noise);
         P_rotate(&cur, V_unit(v_noise));
-        V_print(v_noise);
 
         M_addSlice(m, p, &cur);
 
